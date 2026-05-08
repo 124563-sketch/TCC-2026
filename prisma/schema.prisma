@@ -3,7 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql" // ou "sqlite", dependendo do que você escolheu
+  url      = env("DATABASE_URL")
 }
 
 enum Role {
