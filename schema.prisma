@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Role {
+  STUDENT
+  SUPERVISOR
+}
+
+model User {
+  id                   String           @id @default(cuid())
+  email                String           @unique
+  password             String
+  name                 String?
+  role                 Role             @default(STUDENT)
+  totalPracticeSeconds Int              @default(0)
+  createdAt            DateTime         @default(now())
+  moduleProgress       ModuleProgress[]
+  quizAttempts         QuizAttempt[]
+}
+
+model ModuleProgress {
+  id        String   @id @default(cuid())
+  userId    String
+  moduleId  String
+  status    String   @default("not_started")
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, moduleId])
+}
+
+model QuizAttempt {
+  id          String   @id @default(cuid())
+  userId      String
+  moduleId    String
+  score       Int
+  answers     String
+  completedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, moduleId])
+}
